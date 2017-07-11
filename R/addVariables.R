@@ -19,7 +19,7 @@
 #'
 #'@import parallel
 #'
-#'@importFrom ("utils", "install.packages", "installed.packages", "write.table")
+#'@importFrom ("install.packages", "installed.packages", "write.table")
 #'
 #' @examples
 #'\dontrun{
@@ -79,6 +79,8 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #'@return this function returns out file of mclapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved, row by row.
 #'
 #'@import parallel
+#'
+#' @importFrom ("install.packages", "installed.packages", "write.table")
 #'
 #'@details if the parallel package is not installed already, it will be.
 #'
@@ -154,6 +156,8 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'
 #'@import dplyr
 #'
+#'@importFrom ("install.packages", "installed.packages", "write.table")
+#'
 #'@details if the dplyr package is not installed already, it will be.
 #'
 #' @examples
@@ -217,36 +221,60 @@ addBP <- function(crea.dataset=crea.rep, bpdata=bpdata, BPReadCode, filename)
   })
 }
 
-#' Editing final blood pressure file
+#' Editing variable files from add*() functions
 #'
-#' This function will edit column names of the file gotten from addBP(). It will append column names from crea.rep dataset first, and then customly add the names
-#' of the two new columns which are last columns (19 and 20 respectfully). The columns' names will have a name diastolicCodeValue or systolicCodeValue and
-#' diastolicFag or systolicFlag, depending on which file do you analyse. It will also add the formerge column where it
-#' creates a identifier for merging. This column is created by simply pasting PatientID, event.date and CodeValue of the bp file.
+#' This function will edit column names of the file gotten from add*() function. It will append column names from crea.rep dataset first, and then customly add the names
+#' of the new column(s), depending on which file are you editing (BP, BMI or diabetes).
+#' It will also add the "formerge" column where it creates a identifier for merging. This column is created by simply pasting PatientID, event.date and CodeValue of the variable file.
 #'
 #'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
 #'
-#'@param bptype_data blood pressure data gotten from addBP function.
+#'@param variable.data bmi, diabetes or blood pressure data gotten from one of the add*() functions in the package.
 #'
-#'@param BPtype a character string. E.g. "diastolic" or "systolic". How ever you type it, it will be converter to lower case. This will then be pasted with "CodeValue" and "Flag"
+#'@param BPtype a character string. E.g. "diastolic" or "systolic". How ever you type it, it will be converter to lower case. Default is NULL
 #'
-#'@return it returns a edited diastolic BP or systolic BP data frame with CodeValue column with BP value and Flag column with TRUE or FALSE. If TRUE, the BP data for this row is older than 30 days.
+#'@param toedit A vector. Can be "BP", "BMI" or "diabetes". This will tell the function which file editing you want to do.
+#'
+#'@return it returns a edited BMI, diaebete, diastolic BP or systolic BP data frame.
+#'
+#'@details If toedit="BP", you have to specify BPtype ("diastolic" or "systolic"). This will create a edited BP dataframe - it renames last two columns to BP code value and "Flag". Regardless
+#'of what you chose in the "toedit", function will also add the "formerge" column created for the purposes of merging all the variables to the final file.
+#'
 #'
 #' @examples
 #'\dontrun{
-#' editingBP(crea.rep, crea_dia.txt, BPtype="diastolic")
+#' editeddiastolicfile <- editingBP(crea.rep, crea_dia.txt, BPtype="diastolic", toedit="BP")
+#' editedBMIfile <- editingBP(crea.rep, crea_dia.txt, toedit="BMI")
 #'}
 #'
 #' @export
-editingBP <- function(crea.dataset = crea.rep, bptype_data=bpfile, BPtype=c())
-{
-  BPtype <- tolower(BPtype)
-  BPtype_colnames <- paste0(BPtype, c("CodeValue", "Flag"))
-  colnames(bptype_data) <- colnames(crea.dataset)
-  colnames(bptype_data)[c(19,20)] <- BPtype_colnames
+variableDataEditing <- function(crea.dataset = crea.rep, variable.data, BPtype=NULL, toedit=c("BP", "BMI", "diabetes"))
 
-  bptype_data$formerge <- paste(bptype_data$PatientID, bptype_data$event.date, bptype_data$CodeValue, sep="_")
-  return(bptype_data)
+{
+  if(toedit="BP")
+  {
+    BPtype <- tolower(BPtype)
+    BPtype_colnames <- paste0(BPtype, c("CodeValue", "Flag"))
+    colnames(variable.data) <- colnames(crea.dataset)
+    colnames(variable.data)[c(19,20)] <- BPtype_colnames
+    variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
+    return(variable.data)
+  }
+
+  if(toedit="BMI")
+  {
+    colnames(variable.data) <- colnames(crea.dataset)
+    colnames(variable.data)[grep("NA",colnames(variable.data))] <- "BMI"
+    variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
+    return(variable.data)
+  }
+  if(toedit="diabetes")
+  {
+    colnames(variable.data) <- colnames(crea.dataset)
+    colnames(variable.data)[grep("NA",colnames(variable.data))] <- c("Diabetes", "time.since.Diabetes.diagnosis")
+    variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
+    return(variable.data)
+  }
 }
 
 
