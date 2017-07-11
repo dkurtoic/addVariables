@@ -7,5 +7,6 @@ Maintainer: Dunja Kurtoic <dunja_kurtoic@psych.mpg.de>
 Description: For each of the variable there is a different aligning approach, therefore there are three different functions. Join all three variables to creatinine measurements.
 License: What license is it under?
 Encoding: UTF-8
+Depends: R (>= 3.3), dplyr, parallel
 LazyData: true
 RoxygenNote: 6.0.1
