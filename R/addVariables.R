@@ -239,19 +239,19 @@ addBP <- function(crea.dataset=crea.rep, bpdata=bpdata, BPReadCode, filename)
 #'
 #'@details If toedit="BP", you have to specify BPtype ("diastolic" or "systolic"). This will create a edited BP dataframe - it renames last two columns to BP code value and "Flag". Regardless
 #'of what you chose in the "toedit", function will also add the "formerge" column created for the purposes of merging all the variables to the final file.
-#'
+#'I suggest saving the final files as RDS (saveRDS(editeddiastolicfile, "path/to/file.rds")), as it uses less space and loads faster.
 #'
 #' @examples
 #'\dontrun{
-#' editeddiastolicfile <- editingBP(crea.rep, crea_dia.txt, BPtype="diastolic", toedit="BP")
-#' editedBMIfile <- editingBP(crea.rep, crea_dia.txt, toedit="BMI")
+#' editeddiastolicfile <- variableDataEditing(crea.rep, crea_dia.txt, BPtype="diastolic", toedit="BP")
+#' editedBMIfile <- variableDataEditing(crea.rep, crea_dia.txt, toedit="BMI")
 #'}
 #'
 #' @export
 variableDataEditing <- function(crea.dataset = crea.rep, variable.data, BPtype=NULL, toedit=c("BP", "BMI", "diabetes"))
 
 {
-  if(toedit="BP")
+  if(toedit=="BP")
   {
     BPtype <- tolower(BPtype)
     BPtype_colnames <- paste0(BPtype, c("CodeValue", "Flag"))
@@ -261,14 +261,14 @@ variableDataEditing <- function(crea.dataset = crea.rep, variable.data, BPtype=N
     return(variable.data)
   }
 
-  if(toedit="BMI")
+  if(toedit=="BMI")
   {
     colnames(variable.data) <- colnames(crea.dataset)
     colnames(variable.data)[grep("NA",colnames(variable.data))] <- "BMI"
     variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
     return(variable.data)
   }
-  if(toedit="diabetes")
+  if(toedit=="diabetes")
   {
     colnames(variable.data) <- colnames(crea.dataset)
     colnames(variable.data)[grep("NA",colnames(variable.data))] <- c("Diabetes", "time.since.Diabetes.diagnosis")
@@ -276,6 +276,7 @@ variableDataEditing <- function(crea.dataset = crea.rep, variable.data, BPtype=N
     return(variable.data)
   }
 }
+
 
 
 
