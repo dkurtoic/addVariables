@@ -19,7 +19,7 @@
 #'
 #'@import parallel
 #'
-#'@importFrom ("install.packages", "installed.packages", "write.table")
+#'@importFrom utils installed.packages write.table
 #'
 #' @examples
 #'\dontrun{
@@ -80,7 +80,7 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #'
 #'@import parallel
 #'
-#' @importFrom ("install.packages", "installed.packages", "write.table")
+#'@importFrom utils installed.packages write.table
 #'
 #'@details if the parallel package is not installed already, it will be.
 #'
@@ -156,7 +156,7 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'
 #'@import dplyr
 #'
-#'@importFrom ("install.packages", "installed.packages", "write.table")
+#'@importFrom utils installed.packages write.table
 #'
 #'@details if the dplyr package is not installed already, it will be.
 #'
@@ -275,6 +275,35 @@ variableDataEditing <- function(crea.dataset = crea.rep, variable.data, BPtype=N
     variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
     return(variable.data)
   }
+}
+
+#' Merging it all together
+#'
+#' Helps to merge four datasets (BMI, Systolic BP, Diastolic BP and Diabetes). First one you submit (df1) will be the "main", meaning that all the columns
+#' of this data set will be preserved. In the second dataset only some columns will be preserved (according to your demands). You customize that
+#' in the colsToSelect argument. "formerge" column is always preserved, and you specify the others.
+#'
+#' @param df1 one of the datasets from variableDataEditing() function.
+#' @param df2 one of the datasets from variableDataEditing() function.
+#' @param colsToSelect Default is NULL. A character vector of columns which you want to save from df2.
+#'
+#' @import dplyr
+#' @importFrom base merge
+#'
+#' @examples
+#' \dontrun{
+#' bmisys <- mergeMe(bmidata, sysdata, colsToSelect=c("systolicCodeValue", "systolicFlag"))
+#' bmisysdiast <- mergeMe(bmisys, diastdata, colsToSelect=c("diastolicCodeValue", "diastolicFlag"))
+#' bmisysdiast_diab <- mergeMe(bmisysdiast, diabetes.data, colsToSelect=c("Diabetes", "time.since.diabetes.diagnosis"))
+#' }
+#'
+#' @export
+
+mergeMe <- function(df1, df2, colsToSelect=NULL)
+{
+  df2 <- df2 %>% select_(~formerge, colsToSelect)
+  df1df2 <- merge(df1, df2, by="formerge")
+  return(df1df2)
 }
 
 
