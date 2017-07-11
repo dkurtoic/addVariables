@@ -1,4 +1,4 @@
-Package: addVar
+Package: addVariables
 Type: Package
 Title: Aligns creatinine event.dates with three types of variables: BMI, diabetes and blood pressure
 Version: 0.1.0

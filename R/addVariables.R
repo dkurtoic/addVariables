@@ -30,10 +30,10 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
   pckgList<- "parallel"
   toInstall <- pckgList[!(pckgList %in% installed.packages()[,"Package"])]
   if(length(toInstall))
-    {
+  {
     install.packages(toInstall)
     print("Package parallel is being installed")
-    }
+  }
   NbOfCores <- as.integer(NbOfCores)
   crea.dataset$BMI <- NA
   crea.test <- crea.dataset
@@ -41,21 +41,21 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 
   mclapply(unique(crea.dataset$PatientID), function(x)
   {
-  for (i in which(crea.test$PatientID == x)) #for each row of pat.ID X
-  {
-    if(sum(unique(bmiNoNA$PatientID) %in% x)==1)
+    for (i in which(crea.test$PatientID == x)) #for each row of pat.ID X
     {
-      BMIdate <- bmiNoNA[bmiNoNA$PatientID == x,"event.date"][which.min(abs(crea.test[i,"event.date"] - bmiNoNA[bmiNoNA$PatientID == x,"event.date"]))]
-      BMIdate <- BMIdate[1]
-      BMI <- min(bmiNoNA[bmiNoNA$event.date==BMIdate & bmiNoNA$PatientID==x,"CodeValue"])
+      if(sum(unique(bmiNoNA$PatientID) %in% x)==1)
+      {
+        BMIdate <- bmiNoNA[bmiNoNA$PatientID == x,"event.date"][which.min(abs(crea.test[i,"event.date"] - bmiNoNA[bmiNoNA$PatientID == x,"event.date"]))]
+        BMIdate <- BMIdate[1]
+        BMI <- min(bmiNoNA[bmiNoNA$event.date==BMIdate & bmiNoNA$PatientID==x,"CodeValue"])
 
-      crea.test[i,"BMI"] <- BMI
-      write.table(crea.test[i,], filename, row.names = F, col.names = F, append = T)
+        crea.test[i,"BMI"] <- BMI
+        write.table(crea.test[i,], filename, row.names = F, col.names = F, append = T)
+      }
+      # if there is no BMI data for this Patient, NA is left in the BMI column
+      else {write.table(crea.test[i,], filename, row.names = F, col.names = F, append = T)}
     }
-    # if there is no BMI data for this Patient, NA is left in the BMI column
-    else {write.table(crea.test[i,], filename, row.names = F, col.names = F, append = T)}
-  }
-}, mc.cores = getOption("mc.cores",as.integer(NbOfCores)))
+  }, mc.cores = getOption("mc.cores",as.integer(NbOfCores)))
 }
 
 #' Adding diabetes data to your final file
