@@ -9,7 +9,7 @@
 #'
 #'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
 #'
-#'@param bmiFile file with extracted BMI codes from SIR data (codes starting with" 22K"); duplicates removed, NA free. All columns from SIR data can be present.
+#'@param bmi.dataset file with extracted BMI codes from SIR data (codes starting with" 22K"); duplicates removed, NA free. All columns from SIR data can be present.
 #'
 #'@param NbOfCores how much cores do you want to use for your parallel process? Will be added to getOption() from mclapply. Default is 4 (should work on any PC), but can be changed to less or more.
 #'
@@ -18,6 +18,8 @@
 #'@return this function returns nothig. It saves the output to your filename automatically
 #'
 #'@import parallel
+#'
+#'@importFrom ("utils", "install.packages", "installed.packages", "write.table")
 #'
 #' @examples
 #'\dontrun{
@@ -179,7 +181,7 @@ addBP <- function(crea.dataset=crea.rep, bpdata=bpdata, BPReadCode, filename)
   crea.test$Flag <- F
 
   #filter bp data. Analysing diastolic or systolic?
-  bpdata_filtered <- bpdata %>% filter(ReadCode == ReadCode)
+  bpdata_filtered <- bpdata %>% filter_(~ReadCode == ReadCode)
   bpdata_filtered$CodeValue <- as.numeric(as.character(bpdata_filtered$CodeValue)) # convert factor to numeric
 
   # run lapply
@@ -215,7 +217,37 @@ addBP <- function(crea.dataset=crea.rep, bpdata=bpdata, BPReadCode, filename)
   })
 }
 
+#' Editing final blood pressure file
+#'
+#' This function will edit column names of the file gotten from addBP(). It will append column names from crea.rep dataset first, and then customly add the names
+#' of the two new columns which are last columns (19 and 20 respectfully). The columns' names will have a name diastolicCodeValue or systolicCodeValue and
+#' diastolicFag or systolicFlag, depending on which file do you analyse. It will also add the formerge column where it
+#' creates a identifier for merging. This column is created by simply pasting PatientID, event.date and CodeValue of the bp file.
+#'
+#'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
+#'
+#'@param bptype_data blood pressure data gotten from addBP function.
+#'
+#'@param BPtype a character string. E.g. "diastolic" or "systolic". How ever you type it, it will be converter to lower case. This will then be pasted with "CodeValue" and "Flag"
+#'
+#'@return it returns a edited diastolic BP or systolic BP data frame with CodeValue column with BP value and Flag column with TRUE or FALSE. If TRUE, the BP data for this row is older than 30 days.
+#'
+#' @examples
+#'\dontrun{
+#' editingBP(crea.rep, crea_dia.txt, BPtype="diastolic")
+#'}
+#'
+#' @export
+editingBP <- function(crea.dataset = crea.rep, bptype_data=bpfile, BPtype=c())
+{
+  BPtype <- tolower(BPtype)
+  BPtype_colnames <- paste0(BPtype, c("CodeValue", "Flag"))
+  colnames(bptype_data) <- colnames(crea.dataset)
+  colnames(bptype_data)[c(19,20)] <- BPtype_colnames
 
+  bptype_data$formerge <- paste(bptype_data$PatientID, bptype_data$event.date, bptype_data$CodeValue, sep="_")
+  return(bptype_data)
+}
 
 
 
