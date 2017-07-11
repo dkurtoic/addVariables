@@ -9,11 +9,11 @@ addBMI(crea.dataset, bmi.dataset, NbOfCores = 4L, filename)
 \arguments{
 \item{crea.dataset}{dataset with creatinine ReadCodes, at least three creatinine measurements per patient.}
 
+\item{bmi.dataset}{file with extracted BMI codes from SIR data (codes starting with" 22K"); duplicates removed, NA free. All columns from SIR data can be present.}
+
 \item{NbOfCores}{how much cores do you want to use for your parallel process? Will be added to getOption() from mclapply. Default is 4 (should work on any PC), but can be changed to less or more.}
 
 \item{filename}{name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.}
-
-\item{bmiFile}{file with extracted BMI codes from SIR data (codes starting with" 22K"); duplicates removed, NA free. All columns from SIR data can be present.}
 }
 \value{
 this function returns nothig. It saves the output to your filename automatically
