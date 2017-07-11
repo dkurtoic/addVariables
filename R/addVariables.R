@@ -288,7 +288,6 @@ variableDataEditing <- function(crea.dataset = crea.rep, variable.data, BPtype=N
 #' @param colsToSelect Default is NULL. A character vector of columns which you want to save from df2. No quotation marks.
 #'
 #' @import dplyr
-#' @importFrom base merge
 #'
 #' @examples
 #' \dontrun{
