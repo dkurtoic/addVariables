@@ -11,7 +11,7 @@ mergeMe(df1, df2, colsToSelect = NULL)
 
 \item{df2}{one of the datasets from variableDataEditing() function.}
 
-\item{colsToSelect}{Default is NULL. A character vector of columns which you want to save from df2.}
+\item{colsToSelect}{Default is NULL. A character vector of columns which you want to save from df2. No quotation marks.}
 }
 \description{
 Helps to merge four datasets (BMI, Systolic BP, Diastolic BP and Diabetes). First one you submit (df1) will be the "main", meaning that all the columns
@@ -20,9 +20,9 @@ in the colsToSelect argument. "formerge" column is always preserved, and you spe
 }
 \examples{
 \dontrun{
-bmisys <- mergeMe(bmidata, sysdata, colsToSelect=c("systolicCodeValue", "systolicFlag"))
-bmisysdiast <- mergeMe(bmisys, diastdata, colsToSelect=c("diastolicCodeValue", "diastolicFlag"))
-bmisysdiast_diab <- mergeMe(bmisysdiast, diabetes.data, colsToSelect=c("Diabetes", "time.since.diabetes.diagnosis"))
+bmisys <- mergeMe(bmidata, sysdata, colsToSelect=c(systolicCodeValue, systolicFlag))
+bmisysdiast <- mergeMe(bmisys, diastdata, colsToSelect=c(diastolicCodeValue, diastolicFlag))
+bmisysdiast_diab <- mergeMe(bmisysdiast, diabetes.data, colsToSelect=c(Diabetes, time.since.diabetes.diagnosis))
 }
 
 }

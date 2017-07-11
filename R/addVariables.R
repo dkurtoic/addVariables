@@ -285,22 +285,23 @@ variableDataEditing <- function(crea.dataset = crea.rep, variable.data, BPtype=N
 #'
 #' @param df1 one of the datasets from variableDataEditing() function.
 #' @param df2 one of the datasets from variableDataEditing() function.
-#' @param colsToSelect Default is NULL. A character vector of columns which you want to save from df2.
+#' @param colsToSelect Default is NULL. A character vector of columns which you want to save from df2. No quotation marks.
 #'
 #' @import dplyr
 #' @importFrom base merge
 #'
 #' @examples
 #' \dontrun{
-#' bmisys <- mergeMe(bmidata, sysdata, colsToSelect=c("systolicCodeValue", "systolicFlag"))
-#' bmisysdiast <- mergeMe(bmisys, diastdata, colsToSelect=c("diastolicCodeValue", "diastolicFlag"))
-#' bmisysdiast_diab <- mergeMe(bmisysdiast, diabetes.data, colsToSelect=c("Diabetes", "time.since.diabetes.diagnosis"))
+#' bmisys <- mergeMe(bmidata, sysdata, colsToSelect=c(systolicCodeValue, systolicFlag))
+#' bmisysdiast <- mergeMe(bmisys, diastdata, colsToSelect=c(diastolicCodeValue, diastolicFlag))
+#' bmisysdiast_diab <- mergeMe(bmisysdiast, diabetes.data, colsToSelect=c(Diabetes, time.since.diabetes.diagnosis))
 #' }
 #'
 #' @export
 
 mergeMe <- function(df1, df2, colsToSelect=NULL)
 {
+  colsToSelect <- paste0("~", colsToSelect)
   df2 <- df2 %>% select_(~formerge, colsToSelect)
   df1df2 <- merge(df1, df2, by="formerge")
   return(df1df2)
