@@ -23,7 +23,7 @@
 #'
 #' @examples
 #'\dontrun{
-#'addBMI(crea.dataset = crea.rep, bmi.dataset = bmiData, NbOfCores =  4L, filename = "creaWithBMI.txt")
+#'addBMI(crea.dataset, bmi.dataset, NbOfCores =  4L, filename = "creaWithBMI.txt")
 #'}
 #'
 #' @export
@@ -86,7 +86,7 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #'
 #' @examples
 #'\dontrun{
-#'addBMI(crea.dataset = crea.rep, diabetes.dataset = diabetes, NbOfCores=4L, filename = "creaWithDiabetes.txt")
+#'addBMI(crea.dataset, diabetes.dataset = diabetes, NbOfCores=4L, filename = "creaWithDiabetes.txt")
 #'}
 #'
 #' @export
@@ -162,12 +162,12 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'
 #' @examples
 #'\dontrun{
-#'addBMI(crea.dataset=crea.rep, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
+#'addBMI(crea.dataset, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
 #'}
 #'
 #' @export
 #'
-addBP <- function(crea.dataset=crea.rep, bpdata=bpdata, BPReadCode, filename)
+addBP <- function(crea.dataset, bpdata=bpdata, BPReadCode, filename)
 {
 
   #install dplyr if not already installed

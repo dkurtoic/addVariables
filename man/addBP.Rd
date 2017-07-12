@@ -4,7 +4,7 @@
 \alias{addBP}
 \title{Adding blood pressure  data to your final file}
 \usage{
-addBP(crea.dataset = crea.rep, bpdata = bpdata, BPReadCode, filename)
+addBP(crea.dataset, bpdata = bpdata, BPReadCode, filename)
 }
 \arguments{
 \item{crea.dataset}{dataset with creatinine ReadCodes, at least three creatinine measurements per patient.}
@@ -30,7 +30,7 @@ if the dplyr package is not installed already, it will be.
 }
 \examples{
 \dontrun{
-addBMI(crea.dataset=crea.rep, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
+addBMI(crea.dataset, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
 }
 
 }

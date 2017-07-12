@@ -29,7 +29,7 @@ it uses parallel lapply - mclapply from "parallel" package. It's recommended to 
 }
 \examples{
 \dontrun{
-addBMI(crea.dataset = crea.rep, bmi.dataset = bmiData, NbOfCores =  4L, filename = "creaWithBMI.txt")
+addBMI(crea.dataset, bmi.dataset, NbOfCores =  4L, filename = "creaWithBMI.txt")
 }
 
 }

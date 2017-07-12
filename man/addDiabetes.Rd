@@ -30,7 +30,7 @@ if the parallel package is not installed already, it will be.
 }
 \examples{
 \dontrun{
-addBMI(crea.dataset = crea.rep, diabetes.dataset = diabetes, NbOfCores=4L, filename = "creaWithDiabetes.txt")
+addBMI(crea.dataset, diabetes.dataset = diabetes, NbOfCores=4L, filename = "creaWithDiabetes.txt")
 }
 
 }
