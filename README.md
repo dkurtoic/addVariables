@@ -1,8 +1,12 @@
 # addVariables
 Package installation:
+
 (install.packages("devtools"))
+
 library("devtools")
+
 install_github("dkurtoic/addVariables")
+
 library("addVariables")
 
 This package is introduced to help synchronize data filtering on PERMIT project. In this package you can find these functions:
