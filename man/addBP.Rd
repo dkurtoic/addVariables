@@ -16,7 +16,7 @@ addBP(crea.dataset, bpdata = bpdata, BPReadCode, filename)
 \item{filename}{name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.}
 }
 \value{
-This function returns out file of lapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved, row by row.
+This function returns out file of lapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved to a .txt file, row by row, and can later be accessed by using "read.table" function.
 }
 \description{
 This function takes your dataset (crea.rep or similar) and finds blood pressure information on each patient in crea dataset.
@@ -25,8 +25,6 @@ This function also adds Flag column to the final data set. If the BP measure is 
 }
 \details{
 This function uses lapply, not mclapply. Even more recommended to run it in the background or on cluster.
-
-if the dplyr package is not installed already, it will be.
 }
 \examples{
 \dontrun{

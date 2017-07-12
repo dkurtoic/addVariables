@@ -11,7 +11,7 @@ mergeMe(df1, df2, colsToSelect = NULL)
 
 \item{df2}{one of the datasets from variableDataEditing() function.}
 
-\item{colsToSelect}{Default is NULL. A character vector of columns which you want to save from df2. No quotation marks.}
+\item{colsToSelect}{Default is NULL. A character vector of columns which you want to save from df2. No quotation marks. If you leave it as NULL, only formerge column will be added to the final data frame.}
 }
 \description{
 Helps to merge four datasets (BMI, Systolic BP, Diastolic BP and Diabetes). First one you submit (df1) will be the "main", meaning that all the columns

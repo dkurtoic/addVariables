@@ -15,11 +15,11 @@
 #'
 #'@param filename name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.
 #'
-#'@return This function returns output file of mclapply function. Can be useful to save the output to a file in case an error occurrs because you can find error details in the output file. The creatinine data with BMI is automatically saved to a file, row by row.
+#'@return This function returns output file of mclapply function. Can be useful to save the output to a file in case an error occurrs because you can find error details in the output file. The creatinine data with BMI is automatically saved to a .txt file, row by row, and can later be accessed by using "read.table" function.
 #'
 #'@import parallel
 #'
-#'@importFrom utils install.packages installed.packages write.table
+#'@importFrom utils write.table
 #'
 #' @examples
 #'\dontrun{
@@ -74,13 +74,11 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #'
 #'@param filename name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.
 #'
-#'@return This function returns out file of mclapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved to a file you specify, row by row.
+#'@return This function returns out file of mclapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved to a .txt file, row by row, and can later be accessed by using "read.table" function.
 #'
 #'@import parallel
 #'
-#'@importFrom utils install.packages installed.packages write.table
-#'
-#'@details if the parallel package is not installed already, it will be.
+#'@importFrom utils write.table
 #'
 #' @examples
 #'\dontrun{
@@ -145,13 +143,11 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'
 #'@param filename name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.
 #'
-#'@return This function returns out file of lapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved, row by row.
+#'@return This function returns out file of lapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved to a .txt file, row by row, and can later be accessed by using "read.table" function.
 #'
 #'@import dplyr
 #'
-#'@importFrom utils install.packages installed.packages write.table
-#'
-#'@details if the dplyr package is not installed already, it will be.
+#'@importFrom utils write.table
 #'
 #' @examples
 #'\dontrun{
@@ -269,7 +265,7 @@ variableDataEditing <- function(crea.dataset, variable.data = variable.data, BPt
 #'
 #' @param df1 one of the datasets from variableDataEditing() function.
 #' @param df2 one of the datasets from variableDataEditing() function.
-#' @param colsToSelect Default is NULL. A character vector of columns which you want to save from df2. No quotation marks.
+#' @param colsToSelect Default is NULL. A character vector of columns which you want to save from df2. No quotation marks. If you leave it as NULL, only formerge column will be added to the final data frame.
 #'
 #' @import dplyr
 #'
@@ -284,7 +280,7 @@ variableDataEditing <- function(crea.dataset, variable.data = variable.data, BPt
 
 mergeMe <- function(df1, df2, colsToSelect=NULL)
 {
-  df2 <- df2 %>% select_(~formerge, colsToSelect)
+  df2 <- df2 %>% select_(~formerge, ~colsToSelect)
   df1df2 <- merge(df1, df2, by="formerge")
   return(df1df2)
 }

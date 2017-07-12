@@ -16,7 +16,7 @@ addDiabetes(crea.dataset, diabetes.dataset, NbOfCores = 4L, filename)
 \item{filename}{name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.}
 }
 \value{
-This function returns out file of mclapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved to a file you specify, row by row.
+This function returns out file of mclapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved to a .txt file, row by row, and can later be accessed by using "read.table" function.
 }
 \description{
 This function takes your dataset (crea.rep or similar) and finds diabetes information on each patient in crea dataset. For each patient
@@ -25,8 +25,6 @@ was chronologically *after* the diabetes date)
 }
 \details{
 This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
-
-if the parallel package is not installed already, it will be.
 }
 \examples{
 \dontrun{
