@@ -31,30 +31,23 @@
 #' @export
 addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 {
-  pckgList<- "parallel"
-  toInstall <- pckgList[!(pckgList %in% installed.packages()[,"Package"])]
-  if(length(toInstall))
-  {
-    install.packages(toInstall)
-    print("Package parallel is being installed")
-  }
   NbOfCores <- as.integer(NbOfCores)
   crea.dataset$BMI <- NA
   crea.test <- crea.dataset
-  bmiNoNA <- bmi.dataset
+
   crea.test$event.date <- as.Date.character(crea.test$event.date)
-  bmiNoNA$event.date <- as.Date.character(bmiNoNA$event.date)
-  bmiNoNA$CodeValue <- as.numeric(as.character(bmiNoNA$CodeValue))
+  bmi.dataset$event.date <- as.Date.character(bmi.dataset$event.date)
+  bmi.dataset$CodeValue <- as.numeric(as.character(bmi.dataset$CodeValue))
 
   mclapply(unique(crea.dataset$PatientID), function(x)
   {
     for (i in which(crea.test$PatientID == x)) #for each row of pat.ID X
     {
-      if(sum(unique(bmiNoNA$PatientID) %in% x)==1)
+      if(sum(unique(bmi.dataset$PatientID) %in% x)==1)
       {
-        BMIdate <- bmiNoNA[bmiNoNA$PatientID == x,"event.date"][which.min(abs(crea.test[i,"event.date"] - bmiNoNA[bmiNoNA$PatientID == x,"event.date"]))]
+        BMIdate <- bmi.dataset[bmi.dataset$PatientID == x,"event.date"][which.min(abs(crea.test[i,"event.date"] - bmi.dataset[bmi.dataset$PatientID == x,"event.date"]))]
         BMIdate <- BMIdate[1]
-        BMI <- min(bmiNoNA[bmiNoNA$event.date==BMIdate & bmiNoNA$PatientID==x,"CodeValue"])
+        BMI <- min(bmi.dataset[bmi.dataset$event.date==BMIdate & bmi.dataset$PatientID==x,"CodeValue"])
 
         crea.test[i,"BMI"] <- BMI
         write.table(crea.test[i,], filename, row.names = F, col.names = F, append = T)
@@ -98,21 +91,15 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #'
 addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 {
-  # install parallel if not installed already
-  pckgList<- "parallel"
-  toInstall <- pckgList[!(pckgList %in% installed.packages()[,"Package"])]
-  if(length(toInstall))
-  {
-    install.packages(toInstall)
-    print("Package parallel is being installed")
-  }
   # prepare the data
   NbOfCores <- as.integer(NbOfCores)
   crea.test <- crea.dataset
   crea.test$Diabetes <- 0
   crea.test$time.since.diagnosis <- 0
+
   diabetes <- diabetes.dataset
   diabetes$event.date <- as.Date.character(diabetes$event.date)
+
   # run parallel lapply
   mclapply(unique(crea.test$PatientID), function(x)
   {
@@ -175,15 +162,6 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'
 addBP <- function(crea.dataset, bpdata=bpdata, BPReadCode, filename)
 {
-
-  #install dplyr if not already installed
-  pckgList<- "dplyr"
-  toInstall <- pckgList[!(pckgList %in% installed.packages()[,"Package"])]
-  if(length(toInstall))
-  {
-    install.packages(toInstall)
-    print("Package dplyr is being installed")
-  }
 
   #prepare the data
   crea.test <- crea.dataset
@@ -262,7 +240,7 @@ variableDataEditing <- function(crea.dataset, variable.data = variable.data, BPt
     BPtype <- tolower(BPtype)
     BPtype_colnames <- paste0(BPtype, c("CodeValue", "Flag"))
     colnames(variable.data) <- colnames(crea.dataset)
-    colnames(variable.data)[c(19,20)] <- BPtype_colnames
+    colnames(variable.data)[is.na(colnames(variable.data))] <- BPtype_colnames
     variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
     return(variable.data)
   }
@@ -270,14 +248,14 @@ variableDataEditing <- function(crea.dataset, variable.data = variable.data, BPt
   if(toedit=="BMI")
   {
     colnames(variable.data) <- colnames(crea.dataset)
-    colnames(variable.data)[grep("NA",colnames(variable.data))] <- "BMI"
+    colnames(variable.data)[is.na(colnames(variable.data))] <- "BMI"
     variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
     return(variable.data)
   }
   if(toedit=="diabetes")
   {
     colnames(variable.data) <- colnames(crea.dataset)
-    colnames(variable.data)[grep("NA",colnames(variable.data))] <- c("Diabetes", "time.since.Diabetes.diagnosis")
+    colnames(variable.data)[is.na(colnames(variable.data))] <- c("Diabetes", "time.since.Diabetes.diagnosis")
     variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
     return(variable.data)
   }
@@ -306,7 +284,6 @@ variableDataEditing <- function(crea.dataset, variable.data = variable.data, BPt
 
 mergeMe <- function(df1, df2, colsToSelect=NULL)
 {
-  colsToSelect <- paste0("~", colsToSelect)
   df2 <- df2 %>% select_(~formerge, colsToSelect)
   df1df2 <- merge(df1, df2, by="formerge")
   return(df1df2)
