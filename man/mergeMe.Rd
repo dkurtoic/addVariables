@@ -22,7 +22,7 @@ in the colsToSelect argument. "formerge" column is always preserved, and you spe
 \dontrun{
 mergeMe(bmidata, sysdata, colsToSelect=c(systolicCodeValue, systolicFlag))
 mergeMe(bmisys, diastdata, colsToSelect=c(diastolicCodeValue, diastolicFlag))
-mergeMe(bmisysdiast, diabetes.data, colsToSelect=c(Diabetes, time.since.diabetes.diagnosis))
+mergeMe(bmisysdiast, diabetes.data, colsToSelect=c("Diabetes","diabetes.exposure"))
 }
 
 }

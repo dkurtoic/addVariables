@@ -24,7 +24,7 @@ It is up to you which ReadCode you want to analyse. You can only analyse full Re
 This function also adds Flag column to the final data set. If the BP measure is more than 30 days old, the Flag column for this patient's event.date will have TRUE.
 }
 \details{
-This function uses lapply, not mclapply. Even more recommended to run it in the background or on cluster.
+This function uses lapply, not mclapply. Even more recommended to run it in the background or on cluster. The column used for time analysis is named "event.date".
 }
 \examples{
 \dontrun{

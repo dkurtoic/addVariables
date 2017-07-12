@@ -25,7 +25,7 @@ It loops through each patient ID, finds all event.dates and CodeValues for BMI i
 to creatinine event.date (not necessarily after the creatinine event), and saves this BMI value. It is saving a new dataframe row by row, in every loop.
 }
 \details{
-This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
+This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster. The column used for time analysis is named "event.date".
 }
 \examples{
 \dontrun{

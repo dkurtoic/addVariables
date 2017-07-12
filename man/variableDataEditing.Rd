@@ -12,12 +12,12 @@ variableDataEditing(crea.dataset, variable.data = variable.data,
 
 \item{variable.data}{bmi, diabetes or blood pressure data gotten from one of the add*() functions in the package.}
 
-\item{BPtype}{a character string. E.g. "diastolic" or "systolic". How ever you type it, it will be converter to lower case. Default is NULL}
+\item{BPtype}{a character string. E.g. "diastolic" or "systolic", or simply "D" and "S". How ever you type it, it will be converter to upper case. Default is NULL}
 
 \item{toedit}{A vector. Can be "BP", "BMI" or "diabetes". This will tell the function which file editing you want to do.}
 }
 \value{
-it returns a edited BMI, diaebete, diastolic BP or systolic BP data frame.
+it returns a edited crea-BMI, crea-diabetes, crea-diastolic BP or crea-systolic BP data frame.
 }
 \description{
 This function will edit column names of the file gotten from add*() function. It will append column names from crea.rep dataset first, and then customly add the names
@@ -28,6 +28,7 @@ It will also add the "formerge" column where it creates a identifier for merging
 If toedit="BP", you have to specify BPtype ("diastolic" or "systolic"). This will create a edited BP dataframe - it renames last two columns to BP code value and "Flag". Regardless
 of what you chose in the "toedit", function will also add the "formerge" column created for the purposes of merging all the variables to the final file.
 I suggest saving the final files as RDS (saveRDS(editeddiastolicfile, "path/to/file.rds")), as it uses less space and loads faster.
+The column used for time analysis is named "event.time".
 }
 \examples{
 \dontrun{

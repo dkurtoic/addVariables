@@ -24,7 +24,7 @@ it first finds the earliest event.date of diabetes and then searches for the clo
 was chronologically *after* the diabetes date)
 }
 \details{
-This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
+This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster. The column used for time analysis is named "event.date".
 }
 \examples{
 \dontrun{

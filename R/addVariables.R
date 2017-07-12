@@ -5,7 +5,7 @@
 #' It loops through each patient ID, finds all event.dates and CodeValues for BMI in this patient, finds the closest event.date
 #' to creatinine event.date (not necessarily after the creatinine event), and saves this BMI value. It is saving a new dataframe row by row, in every loop.
 #'
-#'@details This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
+#'@details This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster. The column used for time analysis is named "event.date".
 #'
 #'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
 #'
@@ -64,7 +64,7 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #' it first finds the earliest event.date of diabetes and then searches for the closest creatinine event.date (making sure that crea event.date
 #' was chronologically *after* the diabetes date)
 #'
-#'@details This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
+#'@details This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster. The column used for time analysis is named "event.date".
 #'
 #'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
 #'
@@ -93,7 +93,7 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
   NbOfCores <- as.integer(NbOfCores)
   crea.test <- crea.dataset
   crea.test$Diabetes <- 0
-  crea.test$time.since.diagnosis <- 0
+  crea.test$diabetes.exposure <- 0
 
   diabetes <- diabetes.dataset
   diabetes$event.date <- as.Date.character(diabetes$event.date)
@@ -115,8 +115,8 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
       #add 1 to those rows where the date is bigger or equal than creaDiabStart
 
 
-      #calculate the time how long (in years) has patient been having diabetes (time.since.diagnosis)
-      crea.test[crea.test$PatientID==x & crea.test$Diabetes==1, "time.since.diagnosis"] <- format(as.numeric((crea.test[crea.test$PatientID==x & crea.test$Diabetes==1,"event.date"] - diabetesStartDate)/365), digits=5)
+      #calculate the time how long (in years) has patient been having diabetes (diabetes.exposure)
+      crea.test[crea.test$PatientID==x & crea.test$Diabetes==1, "diabetes.exposure"] <- format(as.numeric((crea.test[crea.test$PatientID==x & crea.test$Diabetes==1,"event.date"] - diabetesStartDate)/365), digits=5)
 
       write.table(crea.test[crea.test$PatientID==x,], filename, row.names = F, col.names = F, append = T)
     }
@@ -133,7 +133,7 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #' It is up to you which ReadCode you want to analyse. You can only analyse full ReadCode (not the ones that only begin with some string).
 #' This function also adds Flag column to the final data set. If the BP measure is more than 30 days old, the Flag column for this patient's event.date will have TRUE.
 #'
-#'@details This function uses lapply, not mclapply. Even more recommended to run it in the background or on cluster.
+#'@details This function uses lapply, not mclapply. Even more recommended to run it in the background or on cluster. The column used for time analysis is named "event.date".
 #'
 #'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
 #'
@@ -211,15 +211,16 @@ addBP <- function(crea.dataset, bpdata=bpdata, BPReadCode, filename)
 #'
 #'@param variable.data bmi, diabetes or blood pressure data gotten from one of the add*() functions in the package.
 #'
-#'@param BPtype a character string. E.g. "diastolic" or "systolic". How ever you type it, it will be converter to lower case. Default is NULL
+#'@param BPtype a character string. E.g. "diastolic" or "systolic", or simply "D" and "S". How ever you type it, it will be converter to upper case. Default is NULL
 #'
 #'@param toedit A vector. Can be "BP", "BMI" or "diabetes". This will tell the function which file editing you want to do.
 #'
-#'@return it returns a edited BMI, diaebete, diastolic BP or systolic BP data frame.
+#'@return it returns a edited crea-BMI, crea-diabetes, crea-diastolic BP or crea-systolic BP data frame.
 #'
 #'@details If toedit="BP", you have to specify BPtype ("diastolic" or "systolic"). This will create a edited BP dataframe - it renames last two columns to BP code value and "Flag". Regardless
 #'of what you chose in the "toedit", function will also add the "formerge" column created for the purposes of merging all the variables to the final file.
 #'I suggest saving the final files as RDS (saveRDS(editeddiastolicfile, "path/to/file.rds")), as it uses less space and loads faster.
+#'The column used for time analysis is named "event.time".
 #'
 #' @examples
 #'\dontrun{
@@ -233,8 +234,9 @@ variableDataEditing <- function(crea.dataset, variable.data = variable.data, BPt
 {
   if(toedit=="BP")
   {
-    BPtype <- tolower(BPtype)
-    BPtype_colnames <- paste0(BPtype, c("CodeValue", "Flag"))
+    if(class(BPtype) != "character") {print("BPtype has to be a character vector.")}
+    BPtype <- toupper(substr(BPtype, 1,1))
+    BPtype_colnames <- paste0(BPtype, c("BP", "BP30d"))
     colnames(variable.data) <- colnames(crea.dataset)
     colnames(variable.data)[is.na(colnames(variable.data))] <- BPtype_colnames
     variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
@@ -251,7 +253,7 @@ variableDataEditing <- function(crea.dataset, variable.data = variable.data, BPt
   if(toedit=="diabetes")
   {
     colnames(variable.data) <- colnames(crea.dataset)
-    colnames(variable.data)[is.na(colnames(variable.data))] <- c("Diabetes", "time.since.Diabetes.diagnosis")
+    colnames(variable.data)[is.na(colnames(variable.data))] <- c("Diabetes", "diabetes.exposure")
     variable.data$formerge <- paste(variable.data$PatientID, variable.data$event.date, variable.data$CodeValue, sep="_")
     return(variable.data)
   }
@@ -273,7 +275,7 @@ variableDataEditing <- function(crea.dataset, variable.data = variable.data, BPt
 #' \dontrun{
 #' mergeMe(bmidata, sysdata, colsToSelect=c(systolicCodeValue, systolicFlag))
 #' mergeMe(bmisys, diastdata, colsToSelect=c(diastolicCodeValue, diastolicFlag))
-#' mergeMe(bmisysdiast, diabetes.data, colsToSelect=c(Diabetes, time.since.diabetes.diagnosis))
+#' mergeMe(bmisysdiast, diabetes.data, colsToSelect=c("Diabetes","diabetes.exposure"))
 #' }
 #'
 #' @export
