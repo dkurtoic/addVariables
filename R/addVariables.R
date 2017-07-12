@@ -167,7 +167,7 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'
 #' @examples
 #'\dontrun{
-#'addBMI(crea.dataset, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
+#'addBP(crea.dataset, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
 #'}
 #'
 #' @export

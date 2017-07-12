@@ -30,7 +30,7 @@ if the dplyr package is not installed already, it will be.
 }
 \examples{
 \dontrun{
-addBMI(crea.dataset, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
+addBP(crea.dataset, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
 }
 
 }
