@@ -42,6 +42,9 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
   crea.dataset$BMI <- NA
   crea.test <- crea.dataset
   bmiNoNA <- bmi.dataset
+  crea.test$event.date <- as.Date.character(crea.test$event.date)
+  bmiNoNA$event.date <- as.Date.character(bmiNoNA$event.date)
+  bmiNoNA$CodeValue <- as.numeric(as.character(bmiNoNA$CodeValue))
 
   mclapply(unique(crea.dataset$PatientID), function(x)
   {
@@ -108,7 +111,7 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
   crea.test <- crea.dataset
   crea.test$Diabetes <- 0
   diabetes <- diabetes.dataset
-
+  diabetes$event.date <- as.Date.character(diabetes$event.date)
   # run parallel lapply
   mclapply(unique(crea.test$PatientID), function(x)
   {
