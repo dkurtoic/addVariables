@@ -110,6 +110,7 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
   NbOfCores <- as.integer(NbOfCores)
   crea.test <- crea.dataset
   crea.test$Diabetes <- 0
+  crea.test$time.since.diagnosis <- 0
   diabetes <- diabetes.dataset
   diabetes$event.date <- as.Date.character(diabetes$event.date)
   # run parallel lapply
