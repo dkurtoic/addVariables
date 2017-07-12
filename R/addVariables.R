@@ -248,7 +248,7 @@ addBP <- function(crea.dataset=crea.rep, bpdata=bpdata, BPReadCode, filename)
 #'}
 #'
 #' @export
-variableDataEditing <- function(crea.dataset = crea.rep, variable.data = variable.data, BPtype=NULL, toedit=c("BP", "BMI", "diabetes"))
+variableDataEditing <- function(crea.dataset, variable.data = variable.data, BPtype=NULL, toedit=c("BP", "BMI", "diabetes"))
 
 {
   if(toedit=="BP")
@@ -291,9 +291,9 @@ variableDataEditing <- function(crea.dataset = crea.rep, variable.data = variabl
 #'
 #' @examples
 #' \dontrun{
-#' bmisys <- mergeMe(bmidata, sysdata, colsToSelect=c(systolicCodeValue, systolicFlag))
-#' bmisysdiast <- mergeMe(bmisys, diastdata, colsToSelect=c(diastolicCodeValue, diastolicFlag))
-#' bmisysdiast_diab <- mergeMe(bmisysdiast, diabetes.data, colsToSelect=c(Diabetes, time.since.diabetes.diagnosis))
+#' mergeMe(bmidata, sysdata, colsToSelect=c(systolicCodeValue, systolicFlag))
+#' mergeMe(bmisys, diastdata, colsToSelect=c(diastolicCodeValue, diastolicFlag))
+#' mergeMe(bmisysdiast, diabetes.data, colsToSelect=c(Diabetes, time.since.diabetes.diagnosis))
 #' }
 #'
 #' @export

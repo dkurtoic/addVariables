@@ -4,7 +4,7 @@
 \alias{variableDataEditing}
 \title{Editing variable files from add*() functions}
 \usage{
-variableDataEditing(crea.dataset = crea.rep, variable.data = variable.data,
+variableDataEditing(crea.dataset, variable.data = variable.data,
   BPtype = NULL, toedit = c("BP", "BMI", "diabetes"))
 }
 \arguments{
