@@ -30,7 +30,7 @@ if the dplyr package is not installed already, it will be.
 }
 \examples{
 \dontrun{
-lapply_out <- addBMI(crea.dataset=crea.rep, bpdata, BPReadCode=c("246A."), filename="~/mydoc/permit/creaWithDiabetes.txt")
+addBMI(crea.dataset=crea.rep, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
 }
 
 }

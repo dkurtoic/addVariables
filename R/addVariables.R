@@ -19,11 +19,11 @@
 #'
 #'@import parallel
 #'
-#'@importFrom utils installed.packages write.table
+#'@importFrom utils install.packages installed.packages write.table
 #'
 #' @examples
 #'\dontrun{
-#' mclapply_out <- addBMI(crea.dataset = crea.rep, bmi.dataset = bmiData, NbOfCores =  4L, filename = "~/mydoc/permit/creaWithBMI.txt")
+#'addBMI(crea.dataset = crea.rep, bmi.dataset = bmiData, NbOfCores =  4L, filename = "creaWithBMI.txt")
 #'}
 #'
 #' @export
@@ -80,13 +80,13 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #'
 #'@import parallel
 #'
-#'@importFrom utils installed.packages write.table
+#'@importFrom utils install.packages installed.packages write.table
 #'
 #'@details if the parallel package is not installed already, it will be.
 #'
 #' @examples
 #'\dontrun{
-#' mclapply_out <- addBMI(crea.dataset = crea.rep, diabetes.dataset = diabetes, NbOfCores=4L, filename = "~/mydoc/permit/creaWithDiabetes.txt")
+#'addBMI(crea.dataset = crea.rep, diabetes.dataset = diabetes, NbOfCores=4L, filename = "creaWithDiabetes.txt")
 #'}
 #'
 #' @export
@@ -156,13 +156,13 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'
 #'@import dplyr
 #'
-#'@importFrom utils installed.packages write.table
+#'@importFrom utils install.packages installed.packages write.table
 #'
 #'@details if the dplyr package is not installed already, it will be.
 #'
 #' @examples
 #'\dontrun{
-#' lapply_out <- addBMI(crea.dataset=crea.rep, bpdata, BPReadCode=c("246A."), filename="~/mydoc/permit/creaWithDiabetes.txt")
+#'addBMI(crea.dataset=crea.rep, bpdata, BPReadCode=c("246A."), filename="creaWithDiabetes.txt")
 #'}
 #'
 #' @export
@@ -180,7 +180,7 @@ addBP <- function(crea.dataset=crea.rep, bpdata=bpdata, BPReadCode, filename)
   }
 
   #prepare the data
-  crea.test <- crea.rep
+  crea.test <- crea.dataset
   crea.test$BP <- NA
   crea.test$Flag <- F
 
@@ -197,7 +197,7 @@ addBP <- function(crea.dataset=crea.rep, bpdata=bpdata, BPReadCode, filename)
       if(sum(unique(bpdata_filtered$PatientID) %in% x)==1) # whether pat. ID X has data on BP
       {
         # find the closest BP date to crea event.date
-        BPdate <- bpdata_filtered[bpdata_filtered$PatientID == x,"event.date"][which.min(bpdata_filtered(dia[dia$PatientID == x,"event.date"]-crea.test[i,"event.date"]))]
+        BPdate <- bpdata_filtered[bpdata_filtered$PatientID == x,"event.date"][which.min(bpdata_filtered(bpdata_filtered[bpdata_filtered$PatientID == x,"event.date"]-crea.test[i,"event.date"]))]
 
         # if the clostest date is more than 30 days away from creatinine event.date add TRUE to Flag column of the final dataset
         # if not, the condition is skipped
@@ -248,7 +248,7 @@ addBP <- function(crea.dataset=crea.rep, bpdata=bpdata, BPReadCode, filename)
 #'}
 #'
 #' @export
-variableDataEditing <- function(crea.dataset = crea.rep, variable.data, BPtype=NULL, toedit=c("BP", "BMI", "diabetes"))
+variableDataEditing <- function(crea.dataset = crea.rep, variable.data = variable.data, BPtype=NULL, toedit=c("BP", "BMI", "diabetes"))
 
 {
   if(toedit=="BP")

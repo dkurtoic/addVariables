@@ -30,7 +30,7 @@ if the parallel package is not installed already, it will be.
 }
 \examples{
 \dontrun{
-mclapply_out <- addBMI(crea.dataset = crea.rep, diabetes.dataset = diabetes, NbOfCores=4L, filename = "~/mydoc/permit/creaWithDiabetes.txt")
+addBMI(crea.dataset = crea.rep, diabetes.dataset = diabetes, NbOfCores=4L, filename = "creaWithDiabetes.txt")
 }
 
 }

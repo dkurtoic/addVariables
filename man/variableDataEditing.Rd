@@ -4,8 +4,8 @@
 \alias{variableDataEditing}
 \title{Editing variable files from add*() functions}
 \usage{
-variableDataEditing(crea.dataset = crea.rep, variable.data, BPtype = NULL,
-  toedit = c("BP", "BMI", "diabetes"))
+variableDataEditing(crea.dataset = crea.rep, variable.data = variable.data,
+  BPtype = NULL, toedit = c("BP", "BMI", "diabetes"))
 }
 \arguments{
 \item{crea.dataset}{dataset with creatinine ReadCodes, at least three creatinine measurements per patient.}
