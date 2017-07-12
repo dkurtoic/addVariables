@@ -16,7 +16,7 @@ addBMI(crea.dataset, bmi.dataset, NbOfCores = 4L, filename)
 \item{filename}{name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.}
 }
 \value{
-this function returns nothig. It saves the output to your filename automatically
+This function returns output file of mclapply function. Can be useful to save the output to a file in case an error occurrs because you can find error details in the output file. The creatinine data with BMI is automatically saved to a file, row by row.
 }
 \description{
 This function takes your dataset (crea.rep or similar) and aligns BMI event.dates with creatinine measurement event.dates.
@@ -25,11 +25,13 @@ It loops through each patient ID, finds all event.dates and CodeValues for BMI i
 to creatinine event.date (not necessarily after the creatinine event), and saves this BMI value. It is saving a new dataframe row by row, in every loop.
 }
 \details{
-it uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
+This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
 }
 \examples{
 \dontrun{
 addBMI(crea.dataset, bmi.dataset, NbOfCores =  4L, filename = "creaWithBMI.txt")
+running the script in your background:
+nohup Rscript myscript.R &
 }
 
 }

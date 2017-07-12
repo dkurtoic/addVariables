@@ -5,7 +5,7 @@
 #' It loops through each patient ID, finds all event.dates and CodeValues for BMI in this patient, finds the closest event.date
 #' to creatinine event.date (not necessarily after the creatinine event), and saves this BMI value. It is saving a new dataframe row by row, in every loop.
 #'
-#'@details it uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
+#'@details This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
 #'
 #'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
 #'
@@ -15,7 +15,7 @@
 #'
 #'@param filename name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.
 #'
-#'@return this function returns nothig. It saves the output to your filename automatically
+#'@return This function returns output file of mclapply function. Can be useful to save the output to a file in case an error occurrs because you can find error details in the output file. The creatinine data with BMI is automatically saved to a file, row by row.
 #'
 #'@import parallel
 #'
@@ -24,6 +24,8 @@
 #' @examples
 #'\dontrun{
 #'addBMI(crea.dataset, bmi.dataset, NbOfCores =  4L, filename = "creaWithBMI.txt")
+#'running the script in your background:
+#'nohup Rscript myscript.R &
 #'}
 #'
 #' @export
@@ -66,7 +68,7 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #' it first finds the earliest event.date of diabetes and then searches for the closest creatinine event.date (making sure that crea event.date
 #' was chronologically *after* the diabetes date)
 #'
-#'@details it uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
+#'@details This function uses parallel lapply - mclapply from "parallel" package. It's recommended to either run it in the background of your PC or on the cluster.
 #'
 #'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
 #'
@@ -76,7 +78,7 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #'
 #'@param filename name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.
 #'
-#'@return this function returns out file of mclapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved, row by row.
+#'@return This function returns out file of mclapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved to a file you specify, row by row.
 #'
 #'@import parallel
 #'
@@ -142,7 +144,7 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #' It is up to you which ReadCode you want to analyse. You can only analyse full ReadCode (not the ones that only begin with some string).
 #' This function also adds Flag column to the final data set. If the BP measure is more than 30 days old, the Flag column for this patient's event.date will have TRUE.
 #'
-#'@details it uses lapply, not mclapply.
+#'@details This function uses lapply, not mclapply. Even more recommended to run it in the background or on cluster.
 #'
 #'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
 #'
@@ -152,7 +154,7 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'
 #'@param filename name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.
 #'
-#'@return this function returns out file of lapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved, row by row.
+#'@return This function returns out file of lapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved, row by row.
 #'
 #'@import dplyr
 #'
