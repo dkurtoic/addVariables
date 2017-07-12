@@ -202,7 +202,7 @@ addBP <- function(crea.dataset, bpdata=bpdata, BPReadCode, filename)
       if(sum(unique(bpdata_filtered$PatientID) %in% x)==1) # whether pat. ID X has data on BP
       {
         # find the closest BP date to crea event.date
-        BPdate <- bpdata_filtered[bpdata_filtered$PatientID == x,"event.date"][which.min(bpdata_filtered(bpdata_filtered[bpdata_filtered$PatientID == x,"event.date"]-crea.test[i,"event.date"]))]
+        BPdate <- bpdata_filtered[bpdata_filtered$PatientID == x,"event.date"][which.min(bpdata_filtered[bpdata_filtered$PatientID == x,"event.date"]-crea.test[i,"event.date"])]
 
         # if the clostest date is more than 30 days away from creatinine event.date add TRUE to Flag column of the final dataset
         # if not, the condition is skipped
