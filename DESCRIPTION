@@ -10,3 +10,4 @@ Encoding: UTF-8
 Depends: R (>= 3.3), dplyr, parallel
 LazyData: true
 RoxygenNote: 6.0.1
+Suggests: testthat
