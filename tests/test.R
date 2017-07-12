@@ -1,4 +1,4 @@
 library("testthat")
 library("addVariables")
 
-test_check("yourpackage")
+test_check("addVariables")
