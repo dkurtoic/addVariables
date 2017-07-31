@@ -4,14 +4,16 @@
 \alias{addBP}
 \title{Adding blood pressure  data to your final file}
 \usage{
-addBP(crea.dataset, bpdata = bpdata, BPReadCode, filename)
+addBP(crea.datasett, bpdata = bpdata, BPReadCode, NbOfCores = 4L, filename)
 }
 \arguments{
-\item{crea.dataset}{dataset with creatinine ReadCodes, at least three creatinine measurements per patient.}
+\item{crea.datasett}{dataset with creatinine ReadCodes, at least three creatinine measurements per patient.}
 
 \item{bpdata}{blood pressure data filtered out from SIR data or similar. It has to be clean data, no NA, no duplicates. Has to contain ReadCodes for blood pressure type, event.date of blood pressure measurement and patient ID.}
 
 \item{BPReadCode}{blood pressure ReadCode, character vector of length one (see examples).}
+
+\item{NbOfCores}{how much cores do you want to use for your parallel process? Will be added to getOption() from mclapply. Default is 4.}
 
 \item{filename}{name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.}
 }

@@ -29,33 +29,34 @@
 #'}
 #'
 #' @export
-addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
+addBMI <- function (crea.dataset, bmi.dataset, NbOfCores = 4L, filename) 
 {
-  NbOfCores <- as.integer(NbOfCores)
   crea.dataset$BMI <- NA
-  crea.test <- crea.dataset
-
-  crea.test$event.date <- as.Date.character(crea.test$event.date)
+  crea.dataset$event.date <- as.Date.character(crea.dataset$event.date)
   bmi.dataset$event.date <- as.Date.character(bmi.dataset$event.date)
   bmi.dataset$CodeValue <- as.numeric(as.character(bmi.dataset$CodeValue))
-
-  mclapply(unique(crea.dataset$PatientID), function(x)
+  
+  mclapply(unique(crea.dataset$PatientID), function(x) 
   {
-    for (i in which(crea.test$PatientID == x)) #for each row of pat.ID X
+    bmi.x <-  bmi.dataset[bmi.dataset$PatientID == x, c("event.date", "CodeValue")]
+    crea.rows <- which(crea.dataset$PatientID == x)
+    crea.x <- crea.dataset[crea.rows,"event.date"]
+    for (i in 1:length(crea.x)) 
     {
-      if(sum(unique(bmi.dataset$PatientID) %in% x)==1)
+      if (x %in% (bmi.dataset$PatientID))
       {
-        BMIdate <- bmi.dataset[bmi.dataset$PatientID == x,"event.date"][which.min(abs(crea.test[i,"event.date"] - bmi.dataset[bmi.dataset$PatientID == x,"event.date"]))]
-        BMIdate <- BMIdate[1]
-        BMI <- min(bmi.dataset[bmi.dataset$event.date==BMIdate & bmi.dataset$PatientID==x,"CodeValue"])
-
-        crea.test[i,"BMI"] <- BMI
-        write.table(crea.test[i,], filename, row.names = F, col.names = F, append = T)
+        BMIdate <- bmi.x[which.min(abs(crea.x[i] - bmi.x$event.date))[1],"event.date"]
+        BMI <- min(bmi.x[bmi.x$event.date == 
+                           BMIdate, "CodeValue"])
+        crea.dataset[crea.rows[i], "BMI"] <<- BMI
+        write.table(crea.dataset[i, ], filename, row.names = F, col.names = F, append = T)
       }
-      # if there is no BMI data for this Patient, NA is left in the BMI column
-      else {write.table(crea.test[i,], filename, row.names = F, col.names = F, append = T)}
+      else 
+      {
+        write.table(crea.dataset[i, ], filename, row.names = F, col.names = F, append = T)
+      }
     }
-  }, mc.cores = getOption("mc.cores",as.integer(NbOfCores)))
+  }, mc.cores = getOption("mc.cores", as.integer(NbOfCores)))
 }
 
 #' Adding diabetes data to your final file
@@ -86,43 +87,45 @@ addBMI <- function(crea.dataset, bmi.dataset, NbOfCores=4L, filename)
 #'}
 #'
 #' @export
-#'
 addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 {
   # prepare the data
   NbOfCores <- as.integer(NbOfCores)
-  crea.test <- crea.dataset
-  crea.test$Diabetes <- 0
-  crea.test$diabetes.exposure <- 0
+  crea.dataset$Diabetes <- 0
+  crea.dataset$diabetes.exposure <- 0
 
-  diabetes <- diabetes.dataset
-  diabetes$event.date <- as.Date.character(diabetes$event.date)
+  diabetes$event.date <- as.Date(diabetes$event.date)
 
   # run parallel lapply
-  mclapply(unique(crea.test$PatientID), function(x)
+  mclapply(unique(crea.dataset$PatientID), function(x)
   {
-    if(sum(unique(diabetes$PatientID) %in% x)==1)
+    diab.x <- diabetes[diabetes$PatientID==x, "event.date"]
+    crea.x <- crea.dataset[crea.dataset$PatientID==x,]
+    crea.x$rows <- which(crea.dataset$PatientID==x)
+    
+    if(length(diab.x) != 0)
     {
-      diabetesStartDate <- min(diabetes[diabetes$PatientID == x,"event.date"]) # find minimal diabetes event.date (diabetes Start Date)
+      diabetesStartDate <- min(diab.x) # find minimal diabetes event.date (diabetes Start Date)
       #subtract all the crea event.dates for this patient from diabetes StartDate to find the "switch" date, i.e. the crea event.date from which on the patient has diabetes
-      alldiabdates <- crea.test[which(crea.test$PatientID==x), "event.date"]-diabetesStartDate
-      names(alldiabdates) <- which(crea.test$PatientID == x) # to find the correct row number
-      diabPos <- (alldiabdates[alldiabdates >= 0]) #take only positive differences, i.e. crea dates after the diabetesStartDate
+      alldiffs <- crea.x[, "event.date"]-diabetesStartDate
+      names(alldiffs) <- crea.x$rows # to find the correct row number
+      
+      diabPos <- (alldiffs[alldiffs >= 0]) #take only positive differences, i.e. crea dates after the diabetesStartDate
 
       creaPos <- as.numeric(names(diabPos[which.min(diabPos)])) # take the crea event.date closest to the diabetesStartDate (min positive difference, event.date after diabetesStartDate)
-      creaDiabStart <- crea.test[creaPos,"event.date"] # take the first crea date from which on the patient has diabetes
-      crea.test[crea.test$event.date >= creaDiabStart & crea.test$PatientID==x,"Diabetes"] <- as.factor(1)
+      creaDiabStart <- crea.dataset[creaPos,"event.date"] # take the first crea date from which on the patient has diabetes
+      crea.x[crea.x$event.date >= creaDiabStart, "Diabetes"] <- as.factor(1)
       #add 1 to those rows where the date is bigger or equal than creaDiabStart
 
 
       #calculate the time how long (in years) has patient been having diabetes (diabetes.exposure)
-      crea.test[crea.test$PatientID==x & crea.test$Diabetes==1, "diabetes.exposure"] <- format(as.numeric((crea.test[crea.test$PatientID==x & crea.test$Diabetes==1,"event.date"] - diabetesStartDate)/365), digits=5)
+      crea.x[crea.x$Diabetes==1, "diabetes.exposure"] <- format(as.numeric((crea.x[crea.x$Diabetes==1,"event.date"] - diabetesStartDate)/365), digits=5)
 
-      write.table(crea.test[crea.test$PatientID==x,], filename, row.names = F, col.names = F, append = T)
+      write.table(crea.x, filename, row.names = F, col.names = F, append = T)
     }
     else #if there is no diabetes data on this Patient, just save without editing. They will have 0 in the Diabetes column.
     {
-      write.table(crea.test[crea.test$PatientID==x,], filename, row.names = F, col.names = F, append = T)
+      write.table(crea.x, filename, row.names = F, col.names = F, append = T)
     }
   }, mc.cores = getOption("mc.cores",NbOfCores))
 }
@@ -135,17 +138,21 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'
 #'@details This function uses lapply, not mclapply. Even more recommended to run it in the background or on cluster. The column used for time analysis is named "event.date".
 #'
-#'@param crea.dataset dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
+#'@param crea.datasett dataset with creatinine ReadCodes, at least three creatinine measurements per patient.
 #'
 #'@param bpdata blood pressure data filtered out from SIR data or similar. It has to be clean data, no NA, no duplicates. Has to contain ReadCodes for blood pressure type, event.date of blood pressure measurement and patient ID.
 #'
 #'@param BPReadCode blood pressure ReadCode, character vector of length one (see examples).
+#'
+#'@param NbOfCores how much cores do you want to use for your parallel process? Will be added to getOption() from mclapply. Default is 4.
 #'
 #'@param filename name of the final .txt file your output will be saved to. Can be a path also. Should be a txt file because of write.table function inside.
 #'
 #'@return This function returns out file of lapply function. Can be useful to save the output to a file in case an error occurrs. You can find error details in that output file. The creatinine data with diabetes is automatically saved to a .txt file, row by row, and can later be accessed by using "read.table" function.
 #'
 #'@import dplyr
+#'
+#'@import parallel
 #'
 #'@importFrom utils write.table
 #'
@@ -155,50 +162,51 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
 #'}
 #'
 #' @export
-#'
-addBP <- function(crea.dataset, bpdata=bpdata, BPReadCode, filename)
+addBP <- function(crea.datasett, bpdata=bpdata, BPReadCode, NbOfCores=4L, filename)
 {
 
   #prepare the data
-  crea.test <- crea.dataset
-  crea.test$BP <- NA
-  crea.test$Flag <- F
+  crea.dataset$BP <- NA
+  crea.dataset$Flag <- F
 
   #filter bp data. Analysing diastolic or systolic?
   bpdata_filtered <- bpdata %>% filter_(~ReadCode == ReadCode)
   bpdata_filtered$CodeValue <- as.numeric(as.character(bpdata_filtered$CodeValue)) # convert factor to numeric
 
   # run lapply
-  lapply(unique(crea.test$PatientID), function(x)
+  mclapply(unique(crea.dataset$PatientID), function(x)
   {
-
-    for (i in which(crea.test$PatientID == x)) #for each row of pat.ID X
+    crea.x <- crea.dataset[crea.dataset$PatientID==x,c("event.date", "BP", "Flag")]
+    bp.x <- bpdata[bpdata$PatientID==x,c("event.date", "CodeValue")]
+    
+    for (i in 1:length(crea.x)) #for each row of pat.ID X
     {
-      if(sum(unique(bpdata_filtered$PatientID) %in% x)==1) # whether pat. ID X has data on BP
+      if(dim(bp.x)[1] != 0) # whether pat. ID X has data on BP
       {
         # find the closest BP date to crea event.date
-        BPdate <- bpdata_filtered[bpdata_filtered$PatientID == x,"event.date"][which.min(bpdata_filtered[bpdata_filtered$PatientID == x,"event.date"]-crea.test[i,"event.date"])]
+        BPdate <- bp.x[,"event.date"][which.min(bp.x[,"event.date"]-crea.x[i, "event.date"])]
 
         # if the clostest date is more than 30 days away from creatinine event.date add TRUE to Flag column of the final dataset
         # if not, the condition is skipped
-        if (abs(crea.test[i, "event.date"]-BPdate) > 30)
+        if (abs(crea.x[i, "event.date"]-BPdate) > 30)
         {
-          crea.test[i,"Flag"] <- T
+          crea.x[i,"Flag"] <- T
         }
 
         BPdate <- BPdate[1]
         #this is in case there are more than one BP measures for the same BPdate
-        BP <- min(as.numeric(as.character((bpdata_filtered[bpdata_filtered$event.date==BPdate & bpdata_filtered$PatientID==x,"CodeValue"]))))
+        BP <- min(as.numeric(as.character((bp.x[bp.x$event.date==BPdate,"CodeValue"]))))
         #add in the BP
-        crea.test[i,"BP"] <- BP
-        write.table(crea.test[i,], filename, row.names = F, col.names = F, append = T)
+        crea.x[i,"BP"] <- BP
+        
+        write.table(crea.x[i,], filename, row.names = F, col.names = F, append = T)
       }
       else #if there is no BP data on pat.ID X, just save the row as it is (it already has NAs)
       {
-        write.table(crea.test[i,], filename, row.names = F, col.names = F, append = T)
+        write.table(crea.datase[i,], filename, row.names = F, col.names = F, append = T)
       }
     }
-  })
+  }, mc.cores=getOption("mc.cores", as.intege(NbOfCores)))
 }
 
 #' Editing variable files from add*() functions
