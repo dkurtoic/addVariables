@@ -127,7 +127,7 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
     {
       write.table(crea.x, filename, row.names = F, col.names = F, append = T)
     }
-  }, mc.cores = getOption("mc.cores",NbOfCores))
+  }, mc.cores = getOption("mc.cores", as.integer(NbOfCores)))
 }
 
 #' Adding blood pressure  data to your final file
