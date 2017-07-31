@@ -201,7 +201,7 @@ addBP <- function(crea.datasett, bpdata=bpdata, BPReadCode, NbOfCores=4L, filena
 
         write.table(crea.x[i,], filename, row.names = F, col.names = F, append = T)
       }
-      else #if there is no BP data on pat.ID X, just save the row as it is (it already has NAs)
+      else #if there is no BP data on pat.ID X, just save the row as it is
       {
         write.table(crea.x[i,], filename, row.names = F, col.names = F, append = T)
       }
