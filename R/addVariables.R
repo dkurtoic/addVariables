@@ -206,7 +206,7 @@ addBP <- function(crea.datasett, bpdata=bpdata, BPReadCode, NbOfCores=4L, filena
         write.table(crea.x[i,], filename, row.names = F, col.names = F, append = T)
       }
     }
-  }, mc.cores=getOption("mc.cores", as.intege(NbOfCores)))
+  }, mc.cores=getOption("mc.cores", as.integer(NbOfCores)))
 }
 
 #' Editing variable files from add*() functions
