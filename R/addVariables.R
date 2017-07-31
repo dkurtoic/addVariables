@@ -29,29 +29,29 @@
 #'}
 #'
 #' @export
-addBMI <- function (crea.dataset, bmi.dataset, NbOfCores = 4L, filename) 
+addBMI <- function (crea.dataset, bmi.dataset, NbOfCores = 4L, filename)
 {
   crea.dataset$BMI <- NA
   crea.dataset$event.date <- as.Date.character(crea.dataset$event.date)
   bmi.dataset$event.date <- as.Date.character(bmi.dataset$event.date)
   bmi.dataset$CodeValue <- as.numeric(as.character(bmi.dataset$CodeValue))
-  
-  mclapply(unique(crea.dataset$PatientID), function(x) 
+
+  mclapply(unique(crea.dataset$PatientID), function(x)
   {
     bmi.x <-  bmi.dataset[bmi.dataset$PatientID == x, c("event.date", "CodeValue")]
     crea.rows <- which(crea.dataset$PatientID == x)
     crea.x <- crea.dataset[crea.rows,"event.date"]
-    for (i in 1:length(crea.x)) 
+    for (i in 1:length(crea.x))
     {
       if (x %in% (bmi.dataset$PatientID))
       {
         BMIdate <- bmi.x[which.min(abs(crea.x[i] - bmi.x$event.date))[1],"event.date"]
-        BMI <- min(bmi.x[bmi.x$event.date == 
+        BMI <- min(bmi.x[bmi.x$event.date ==
                            BMIdate, "CodeValue"])
         crea.dataset[crea.rows[i], "BMI"] <<- BMI
         write.table(crea.dataset[i, ], filename, row.names = F, col.names = F, append = T)
       }
-      else 
+      else
       {
         write.table(crea.dataset[i, ], filename, row.names = F, col.names = F, append = T)
       }
@@ -102,14 +102,14 @@ addDiabetes <- function(crea.dataset, diabetes.dataset, NbOfCores=4L, filename)
     diab.x <- diabetes[diabetes$PatientID==x, "event.date"]
     crea.x <- crea.dataset[crea.dataset$PatientID==x,]
     crea.x$rows <- which(crea.dataset$PatientID==x)
-    
+
     if(length(diab.x) != 0)
     {
       diabetesStartDate <- min(diab.x) # find minimal diabetes event.date (diabetes Start Date)
       #subtract all the crea event.dates for this patient from diabetes StartDate to find the "switch" date, i.e. the crea event.date from which on the patient has diabetes
       alldiffs <- crea.x[, "event.date"]-diabetesStartDate
       names(alldiffs) <- crea.x$rows # to find the correct row number
-      
+
       diabPos <- (alldiffs[alldiffs >= 0]) #take only positive differences, i.e. crea dates after the diabetesStartDate
 
       creaPos <- as.numeric(names(diabPos[which.min(diabPos)])) # take the crea event.date closest to the diabetesStartDate (min positive difference, event.date after diabetesStartDate)
@@ -178,7 +178,7 @@ addBP <- function(crea.datasett, bpdata=bpdata, BPReadCode, NbOfCores=4L, filena
   {
     crea.x <- crea.dataset[crea.dataset$PatientID==x,c("event.date", "BP", "Flag")]
     bp.x <- bpdata[bpdata$PatientID==x,c("event.date", "CodeValue")]
-    
+
     for (i in 1:length(crea.x)) #for each row of pat.ID X
     {
       if(dim(bp.x)[1] != 0) # whether pat. ID X has data on BP
@@ -198,12 +198,12 @@ addBP <- function(crea.datasett, bpdata=bpdata, BPReadCode, NbOfCores=4L, filena
         BP <- min(as.numeric(as.character((bp.x[bp.x$event.date==BPdate,"CodeValue"]))))
         #add in the BP
         crea.x[i,"BP"] <- BP
-        
+
         write.table(crea.x[i,], filename, row.names = F, col.names = F, append = T)
       }
       else #if there is no BP data on pat.ID X, just save the row as it is (it already has NAs)
       {
-        write.table(crea.datase[i,], filename, row.names = F, col.names = F, append = T)
+        write.table(crea.x[i,], filename, row.names = F, col.names = F, append = T)
       }
     }
   }, mc.cores=getOption("mc.cores", as.intege(NbOfCores)))
